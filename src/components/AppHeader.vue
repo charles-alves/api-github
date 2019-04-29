@@ -1,25 +1,18 @@
 <template>
   <nav class="navbar navbar-light bg-light">
-    <RouterLink :to="{ name: 'Home' }" class="navbar-brand">Api Github</RouterLink>
-    <form @submit.prevent="buscarUsuario(nomeUsuario)" class="form-inline">
-      <input v-model="nomeUsuario" name="busca-usuario" type="search" class="form-control" placeholder="Usuario" arial-label="Usuario">
-      <button type="submit" class="btn btn-outline-success">Buscar</button>
-    </form>
+    <RouterLink :to="{ name: 'home' }" class="navbar-brand">Api Github</RouterLink>
+
+    <NomeUsuarioForm />
   </nav>
 </template>
 
 <script>
+import NomeUsuarioForm from './NomeUsuarioForm.vue'
+
 export default {
   name: 'AppHeader',
-  data () {
-    return {
-      nomeUsuario: ''
-    }
-  },
-  methods: {
-    buscarUsuario (nomeUsuario) {
-      this.$router.push({ name: 'usuario', params: { nomeUsuario } })
-    }
+  components: {
+    NomeUsuarioForm
   }
 }
 </script>

@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div v-if="usuario" class="row">
       <div class="col-12 text-center">
         <img :src="this.usuario.avatar_url" :alt="usuario.name" class="avatar mb-4 img-thumbnail">
         <h1 v-if="usuario.name">{{ usuario.name }}</h1>
         <h5 class="text-secondary mb-3">({{usuario.login}})</h5>
         <h5 v-if="usuario.location"><i class="fas fa-map-marker-alt"></i> {{ usuario.location }}</h5>
         <p v-if="usuario.blog">
-          <a :href="usuario.blog" class="text-decoration-none">
+          <a :href="usuario.blog" target="_blank" class="text-decoration-none">
             <i class="fas fa-map-marker-alt"></i> {{ usuario.blog }}
           </a>
         </p>
@@ -30,14 +30,19 @@
         </div>
       </div>
     </div>
+    <UsuarioNaoEncontrado v-else />
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import githubService from '../services/github.service'
+import UsuarioNaoEncontrado from '../components/UsuarioNaoEncontrado.vue'
 
 export default {
   name: 'Usuario',
+  components: {
+    UsuarioNaoEncontrado
+  },
   data () {
     return {
       usuario: {}
@@ -46,11 +51,9 @@ export default {
   async beforeRouteEnter (to, from, next) {
     const { nomeUsuario } = to.params
 
-    const response = await axios.get(`https://api.github.com/users/${nomeUsuario}`)
+    let usuario = await githubService.buscarUsuario(nomeUsuario)
 
-    next(vm => {
-      vm.usuario = response.data
-    })
+    next(vm => { vm.usuario = usuario })
   },
   watch: {
     '$route.params.nomeUsuario' (nomeUsuario) {
@@ -59,19 +62,13 @@ export default {
   },
   methods: {
     async carregarUsuario (nomeUsuario) {
-      const response = await axios.get(`https://api.github.com/users/${nomeUsuario}`)
-
-      this.usuario = response.data
+      this.usuario = await githubService.buscarUsuario(nomeUsuario)
     }
   }
 }
 </script>
 
-<style>
-.container {
-  margin-top: 30px;
-}
-
+<style scoped>
 .avatar {
   height: 150px;
   width: 150px;

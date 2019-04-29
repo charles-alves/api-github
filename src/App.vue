@@ -2,6 +2,7 @@
   <div id="app">
     <AppHeader />
     <router-view/>
+    <vue-progress-bar></vue-progress-bar>
   </div>
 </template>
 
@@ -12,6 +13,22 @@ export default {
   name: 'App',
   components: {
     AppHeader
+  },
+  mounted () {
+    this.$Progress.finish()
+  },
+  created () {
+    this.$Progress.start()
+
+    this.$router.beforeEach((to, from, next) => {
+      this.$Progress.start()
+
+      next()
+    })
+
+    this.$router.afterEach((to, from) => {
+      this.$Progress.finish()
+    })
   }
 }
 </script>
